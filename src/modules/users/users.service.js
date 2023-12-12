@@ -13,6 +13,9 @@ export class UserService {
 
   static async findAll(){
     return await User.findAll({
+      attributes: {
+        exclude: ['password','createdAt','updatedAt']
+      },
       where: {
         status: 'available'
       }

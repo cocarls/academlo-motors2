@@ -1,6 +1,6 @@
 import express from 'express';
 import { login, deleteUser, findAllUsers, findOneUser, updateUser, register, changePassword } from './users.controller.js';
-import { protect, validateExistUser } from './users.middleware.js';
+import { protect, protectAccountOwner, restrictTo, validateExistUser } from './users.middleware.js';
 
 export const router = express.Router();
 
@@ -15,12 +15,12 @@ router.patch('/change-password', changePassword)
 router.get('/',findAllUsers)
 
 //router.use('/:id',validateExistUser)
-
+//'client'
 router
   .route('/:id')
-  .get(validateExistUser,findOneUser)
-  .patch(validateExistUser,updateUser)
-  .delete(validateExistUser,deleteUser);
+  .get(restrictTo( 'client','employee'),validateExistUser,findOneUser)
+  .patch(validateExistUser,protectAccountOwner,updateUser)
+  .delete(validateExistUser,protectAccountOwner,deleteUser);
 
 
   

@@ -160,7 +160,7 @@ export const changePassword = catchAsync(async (req, res, next) => {
     password: hashedNewPassword
   });
 
-  console.log(currentPassword, newPassword);
+  
   return res.status(200).json({
     message: 'the user password was updated successfully!',
   });

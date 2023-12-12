@@ -10,6 +10,14 @@ const handleCastError22P02 = () => {
   return new AppError('Invalid data type in database', 400);
 };
 
+const handleJWTExpiredError = () => {
+  return new AppError('Your token has expired! Please login again', 401);
+};
+
+const handleJWTError = () => {
+  return new AppError('Invalid Token. Please login again', 401);
+};
+
 const sendErrorDev = (err, res) => {
   return res.status(err.statusCode).json({
     status: err.status,
@@ -19,13 +27,12 @@ const sendErrorDev = (err, res) => {
   });
 };
 
-const sendErrorProd = async(err, res) => {
-
+const sendErrorProd = async (err, res) => {
   await Error.create({
     status: err.status,
     message: err.message,
     stack: err.stack,
-  })
+  });
   if (err.isOperational) {
     return res.status(err.statusCode).json({
       status: err.status,
@@ -54,6 +61,8 @@ export const globalErrorHandler = (err, req, res, next) => {
 
     if (err.parent?.code === '23505') error = handleCastError23505();
     if (err.parent?.code === '22P02') error = handleCastError22P02();
+    if (err.name === 'TokenExpiredError') error = handleJWTExpiredError();
+    if (err.name === 'JsonWebTokenError') error = handleJWTError();
 
     sendErrorProd(error, res);
   }
