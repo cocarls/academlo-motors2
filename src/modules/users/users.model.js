@@ -1,7 +1,10 @@
 import { DataTypes } from 'sequelize';
-import { sequelize } from './../../config/database/database.js'
+import { sequelize } from './../../config/database/database.js';
+import { encryptedPassword } from '../../config/plugins/encripted-password.plugin.js';
 
-const User = sequelize.define('users', {
+const User = sequelize.define(
+  'users',
+  {
     id: {
       primaryKey: true,
       allowNull: false,
@@ -9,27 +12,35 @@ const User = sequelize.define('users', {
       type: DataTypes.INTEGER,
     },
     name: {
-      type: DataTypes.STRING,
-      allowNull: false
+      type: DataTypes.STRING(50),
+      allowNull: false,
     },
     email: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(80),
       allowNull: false,
-      unique: true
+      unique: true,
     },
     password: {
-      type: DataTypes.STRING,
-      allowNull: false
+      type: DataTypes.STRING(255),
+      allowNull: false,
     },
     role: {
       type: DataTypes.ENUM('client', 'employee'),
-      allowNull: false
+      allowNull: false,
     },
     status: {
       type: DataTypes.ENUM('available', 'disabled'),
       allowNull: false,
-      defaultValue: 'available'
+      defaultValue: 'available',
     },
-});
+  },
+  {
+    hooks: {
+      beforeCreate: async (user) => {
+        user.password = await encryptedPassword(user.password);
+      },
+    },
+  }
+);
 
-export default User;  
+export default User;
