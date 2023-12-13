@@ -11,6 +11,7 @@ export const reapirsSchema = z.object({
     .min(3, { message: 'description is too short' })
     .max(255, { message: 'description is too long' }),
   motorsNumber: z.number(),
+  userId: z.number()
 });
 
 export function validateRepairs(data) {
