@@ -1,3 +1,4 @@
+import User from "../users/users.model.js";
 import Repair from "./repairs.model.js";
 
 export class RepairService {
@@ -15,7 +16,12 @@ export class RepairService {
     return await Repair.findAll({
       where: {
         status: 'pending'
-      }
+      },
+      include: [
+        {
+          model: User
+        }
+      ]
     })
   }
 
